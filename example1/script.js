@@ -51,15 +51,6 @@ async function init () {
     scene.background = new THREE.Color(1,1,1)
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
     camera.position.y = - 50
-
-    // create the renderer and add it to the html
-    renderer = new THREE.WebGLRenderer( { antialias: true } )
-    renderer.setSize( window.innerWidth, window.innerHeight )
-    document.body.appendChild( renderer.domElement )
-
-    // add some controls to orbit the camera
-    const controls = new OrbitControls( camera, renderer.domElement );
-
     // add a directional light
     const directionalLight = new THREE.DirectionalLight( 0xffffff );
     directionalLight.intensity = 2;
@@ -69,28 +60,23 @@ async function init () {
 
     // load the model...
 
-    // instead of relying solely on Rhino3dmLoader, we need to load the rhino model "manually" so
-    // that we have access to the original rhino geometry
-    const url = 'meshes.3dm'
-    const res = await fetch(url)
-    const buffer = await res.arrayBuffer()
-    doc = rhino.File3dm.fromByteArray(new Uint8Array(buffer))
-    console.log(doc)
+    loader.load( 'moon.3dm', function ( object ) {
 
-    // we can use Rhino3dmLoader.parse() to load the model into three.js for visualisation without
-    // having to download it again
-    loader.parse( buffer, function ( object ) {
-
-        hideSpinner()
-
-        object.traverse(function (child) {
-            if (child.isMesh) {
-                child.material = material
-            }
-        })
+        document.getElementById('loader').remove()
         scene.add( object )
-        
-    } )    
+        console.log( object )
+
+    } )
+
+
+    // create the renderer and add it to the html
+    renderer = new THREE.WebGLRenderer( { antialias: true } )
+    renderer.setSize( window.innerWidth, window.innerHeight )
+    document.body.appendChild( renderer.domElement )
+
+    // add some controls to orbit the camera
+    const controls = new OrbitControls( camera, renderer.domElement );
+
 
     // enable boolean button
     booleanButton.disabled = false

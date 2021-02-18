@@ -5,14 +5,13 @@ import rhino3dm from 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm
 import { RhinoCompute } from 'https://cdn.jsdelivr.net/npm/compute-rhino3d@0.13.0-beta/compute.rhino3d.module.js'
 
 // reference the definition
-const definitionName = 'test2.gh'
-
+const definitionName = 'test.gh'
 
 // listen for slider change events
-const count_slider = document.getElementById( 'count' )
-count_slider.addEventListener( 'input', onSliderChange, false )
-const radius_slider = document.getElementById( 'radius' )
-radius_slider.addEventListener( 'input', onSliderChange, false )
+const grow_slider = document.getElementById( 'grow' )
+grow_slider.addEventListener( 'input', onSliderChange, false )
+const seed_slider = document.getElementById( 'seed' )
+seed_slider.addEventListener( 'input', onSliderChange, false )
 
 const downloadButton = document.getElementById("downloadButton")
 downloadButton.onclick = download
@@ -20,6 +19,7 @@ downloadButton.onclick = download
 // set up loader for converting the results to threejs
 const loader = new Rhino3dmLoader()
 loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/' )
+
 
 // create a few variables to store a reference to the rhino3dm library and to the loaded definition
 let rhino, definition, doc
@@ -67,7 +67,7 @@ async function compute() {
     // Call RhinoCompute
     const res = await RhinoCompute.Grasshopper.evaluateDefinition(definition, trees)
 
-    // console.log(res) 
+    console.log(res) 
 
     collectResults(res.values)
 
@@ -144,7 +144,7 @@ function getApiKey() {
 // download button handler
 function download () {
     let buffer = doc.toByteArray()
-    saveByteArray("node.3dm", buffer)
+    saveByteArray("testmr.3dm", buffer)
 }
 
 function saveByteArray ( fileName, byte ) {
@@ -165,7 +165,8 @@ function init() {
     scene = new THREE.Scene()
     scene.background = new THREE.Color(1,1,1)
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    camera.position.z = - 30
+    camera.position.z = - 50
+    
 
     // create the renderer and add it to the html
     renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -190,5 +191,4 @@ function animate() {
 
     requestAnimationFrame(animate)
     renderer.render(scene, camera)
-
 }
